@@ -26,7 +26,11 @@ public abstract class BaseCrudService<T extends BaseDto, E extends BaseEntity> {
         this.entityClass = entityClass;
     }
 
-    public E findById(Long id) {
+    public T findById(Long id) {
+        return mapper.map(jpaRepository.findById(id).get(), dtoClass);
+    }
+
+    public E findEntityById(Long id) {
         return (E) jpaRepository.findById(id).get();
     }
 
@@ -35,14 +39,29 @@ public abstract class BaseCrudService<T extends BaseDto, E extends BaseEntity> {
             .map(entity -> mapper.map(entity, dtoClass))
             .toList();
     }
-    public void create(T dto) {
-        E entity = mapper.map(dto, entityClass);
 
-        jpaRepository.save(entity);
+    public void create(T dto) {
+        if (jpaRepository.findById(dto.getId()).isEmpty()) {
+            E entity = mapper.map(dto, entityClass);
+            jpaRepository.save(entity);
+        } else
+            throw new RuntimeException("Entity with id " + dto.getId() + " exist");
+    }
+
+    public void updateById(Long id, T dto) {
+        if (jpaRepository.findById(id).isPresent()) {
+            E entity = mapper.map(dto, entityClass);
+            entity.setId(id);
+            jpaRepository.save(entity);
+        } else
+            throw new RuntimeException("Entity with id " + id + " does not exist");
     }
 
     public void deleteById(Long id) {
-        if (findById(id) != null) jpaRepository.deleteById(id);
+        if (jpaRepository.findById(id).isPresent())
+            jpaRepository.deleteById(id);
+        else
+            throw new RuntimeException("Entity with id " + id + " does not exist");
     }
 
 

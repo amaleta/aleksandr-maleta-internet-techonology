@@ -29,8 +29,8 @@ public class ReviewService extends BaseCrudService<ReviewDto, ReviewEntity> {
     @Override
     public void create(ReviewDto dto) {
         ReviewEntity entity = mapper.map(dto, ReviewEntity.class);
-        entity.setCustomer(customerService.findById(dto.getCustomerId()));
-        entity.setOrderEntity(orderService.findById(dto.getOrderId()));
+        entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
+        entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
         repository.save(entity);
     }
 

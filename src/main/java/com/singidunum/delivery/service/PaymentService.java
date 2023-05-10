@@ -31,8 +31,8 @@ public class PaymentService extends BaseCrudService<PaymentDto, PaymentEntity> {
     @Override
     public void create(PaymentDto dto) {
         PaymentEntity entity = mapper.map(dto, PaymentEntity.class);
-        entity.setCustomer(customerService.findById(dto.getCustomerId()));
-        entity.setOrderEntity(orderService.findById(dto.getOrderId()));
+        entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
+        entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
         repository.save(entity);
     }
 

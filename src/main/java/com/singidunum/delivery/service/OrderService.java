@@ -4,7 +4,6 @@ import com.singidunum.delivery.dao.entity.OrderEntity;
 import com.singidunum.delivery.dao.enums.OrderStatus;
 import com.singidunum.delivery.dao.repository.OrderRepository;
 import com.singidunum.delivery.dto.OrderDto;
-import java.time.LocalDate;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,9 @@ public class OrderService extends BaseCrudService<OrderDto, OrderEntity> {
     @Override
     public void create(OrderDto dto) {
         OrderEntity entity = mapper.map(dto, OrderEntity.class);
-        entity.setCustomer(customerService.findById(dto.getCustomerId()));
-        entity.setDriver(diverService.findById(dto.getDriverId()));
-        entity.setParcel(parcelService.findById(dto.getParcelId()));
+        entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
+        entity.setDriver(diverService.findEntityById(dto.getDriverId()));
+        entity.setParcel(parcelService.findEntityById(dto.getParcelId()));
         repository.save(entity);
     }
 
