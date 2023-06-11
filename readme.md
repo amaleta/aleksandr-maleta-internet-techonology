@@ -13,4 +13,5 @@
 - run `docker-compose up` to start the application
 - run DeliveryApplication.java to start the application
 - run init.sql to create data
+- use swagger.yml for https://editor.swagger.io/
 - run http://localhost:8080/swagger-ui/index.html
