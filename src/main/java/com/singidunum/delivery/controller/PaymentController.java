@@ -3,6 +3,8 @@ package com.singidunum.delivery.controller;
 import com.singidunum.delivery.dto.PaymentDto;
 import com.singidunum.delivery.service.PaymentService;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,11 +23,16 @@ public class PaymentController extends BaseCrudController<PaymentDto> {
     }
 
 
-    @GetMapping("/amount-sum-without-date")
+    @GetMapping("/amount-sum-between-date")
     public ResponseEntity getList(
-        @RequestParam LocalDate from,
-        @RequestParam LocalDate to,
-        @RequestParam Long customerId) {
-        return new ResponseEntity<>(service.getAmountForDateRange(from,to,customerId), HttpStatus.OK);
+        @RequestParam(required = false) String from,
+        @RequestParam(required = false) String to) {
+        if (from != null && to != null) {
+            return new ResponseEntity<>(
+                service.getAmountForDateRange(
+                    LocalDate.parse(from, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    LocalDate.parse(to, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(List.of(), HttpStatus.OK);
     }
 }

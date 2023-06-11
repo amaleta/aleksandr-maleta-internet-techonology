@@ -2,7 +2,6 @@ package com.singidunum.delivery.controller;
 
 import com.singidunum.delivery.dao.enums.OrderStatus;
 import com.singidunum.delivery.dto.OrderDto;
-import com.singidunum.delivery.dto.ReviewDto;
 import com.singidunum.delivery.service.OrderService;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;

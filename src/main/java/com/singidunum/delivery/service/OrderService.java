@@ -31,15 +31,17 @@ public class OrderService extends BaseCrudService<OrderDto, OrderEntity> {
     }
 
     @Override
-    public void create(OrderDto dto) {
+    public OrderDto create(OrderDto dto) {
         OrderEntity entity = mapper.map(dto, OrderEntity.class);
+        entity.setId(dto.getId());
         entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
         entity.setDriver(diverService.findEntityById(dto.getDriverId()));
         entity.setParcel(parcelService.findEntityById(dto.getParcelId()));
-        repository.save(entity);
+        entity.setStatus(OrderStatus.CREATED.toString());
+        return mapper.map(repository.save(entity), OrderDto.class);
     }
 
-    public List<OrderDto> getByStatus(OrderStatus status){
+    public List<OrderDto> getByStatus(OrderStatus status) {
         return repository.findByStatus(status.toString())
             .stream()
             .map(order -> mapper.map(order, OrderDto.class))

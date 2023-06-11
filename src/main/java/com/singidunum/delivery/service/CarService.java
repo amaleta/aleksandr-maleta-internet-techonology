@@ -23,7 +23,7 @@ public class CarService extends BaseCrudService<CarDto, CarEntity> {
         this.mapper = mapper;
     }
 
-    public List<CarDto> getByYearGreaterThan(Integer year){
+    public List<CarDto> getByYearGreaterThan(Integer year) {
         return carRepository.findByYearGreaterThanEqual(year)
             .stream()
             .map(car -> mapper.map(car, CarDto.class))

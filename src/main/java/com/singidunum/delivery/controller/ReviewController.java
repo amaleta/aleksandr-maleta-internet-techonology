@@ -1,6 +1,5 @@
 package com.singidunum.delivery.controller;
 
-import com.singidunum.delivery.dao.entity.ReviewEntity;
 import com.singidunum.delivery.dto.ReviewDto;
 import com.singidunum.delivery.service.ReviewService;
 import java.util.List;
@@ -21,8 +20,11 @@ public class ReviewController extends BaseCrudController<ReviewDto> {
 
     @GetMapping("/get-driver-review-greater-than")
     public List<ReviewDto> getDriverReviewGreaterThan(
-        @RequestParam Long driverId,
-        @RequestParam Integer rating) {
-        return service.getDriverReviewGreaterThan(driverId, rating);
+        @RequestParam(required = false) Long driverId,
+        @RequestParam(required = false) Integer rating) {
+        if (driverId != null && rating != null) {
+            return service.getDriverReviewGreaterThan(driverId, rating);
+        }
+        return List.of();
     }
 }

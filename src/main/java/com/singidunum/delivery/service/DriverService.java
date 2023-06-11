@@ -23,9 +23,11 @@ public class DriverService extends BaseCrudService<DriverDto, DriverEntity> {
     }
 
     @Override
-    public void create(DriverDto dto) {
+    public DriverDto create(DriverDto dto) {
         DriverEntity entity = mapper.map(dto, DriverEntity.class);
+        entity.setId(dto.getId());
         entity.setCar(carService.findEntityById(dto.getCarId()));
         repository.save(entity);
+        return mapper.map(entity, DriverDto.class);
     }
 }

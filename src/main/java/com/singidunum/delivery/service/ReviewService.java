@@ -27,11 +27,12 @@ public class ReviewService extends BaseCrudService<ReviewDto, ReviewEntity> {
     }
 
     @Override
-    public void create(ReviewDto dto) {
+    public ReviewDto create(ReviewDto dto) {
         ReviewEntity entity = mapper.map(dto, ReviewEntity.class);
+        entity.setId(dto.getId());
         entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
         entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
-        repository.save(entity);
+        return mapper.map(repository.save(entity), ReviewDto.class);
     }
 
     public List<ReviewDto> getDriverReviewGreaterThan(Long driverId, Integer rating) {

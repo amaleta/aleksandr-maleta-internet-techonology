@@ -3,8 +3,8 @@ package com.singidunum.delivery.service;
 import com.singidunum.delivery.dao.entity.PaymentEntity;
 import com.singidunum.delivery.dao.repository.PaymentRepository;
 import com.singidunum.delivery.dto.PaymentDto;
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -29,18 +29,20 @@ public class PaymentService extends BaseCrudService<PaymentDto, PaymentEntity> {
     }
 
     @Override
-    public void create(PaymentDto dto) {
+    public PaymentDto create(PaymentDto dto) {
         PaymentEntity entity = mapper.map(dto, PaymentEntity.class);
+        entity.setId(dto.getId());
         entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
         entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
-        repository.save(entity);
+        entity.setPaymentDate(LocalDate.parse(dto.getPaymentDate()));
+        return mapper.map(repository.save(entity), PaymentDto.class);
     }
 
-    public String getAmountForDateRange(LocalDate startDate, LocalDate endDate, Long customerId) {
-        return String.valueOf(repository.findAllByCustomerIdAndPaymentDateBetween(customerId, startDate, endDate)
-            .stream().map(PaymentEntity::getAmount)
-            .mapToDouble(BigDecimal::doubleValue)
-            .sum());
+    public List<PaymentDto> getAmountForDateRange(LocalDate startDate, LocalDate endDate) {
+        return repository.findAllByPaymentDateBetween(startDate, endDate)
+            .stream()
+            .map(paymentEntity -> mapper.map(paymentEntity, PaymentDto.class))
+            .toList();
     }
 
 }

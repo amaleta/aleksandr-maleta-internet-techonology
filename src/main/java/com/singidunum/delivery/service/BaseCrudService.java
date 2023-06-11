@@ -3,9 +3,11 @@ package com.singidunum.delivery.service;
 import com.singidunum.delivery.dao.entity.BaseEntity;
 import com.singidunum.delivery.dto.BaseDto;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+@Slf4j
 public abstract class BaseCrudService<T extends BaseDto, E extends BaseEntity> {
 
     private final JpaRepository jpaRepository;
@@ -40,12 +42,10 @@ public abstract class BaseCrudService<T extends BaseDto, E extends BaseEntity> {
             .toList();
     }
 
-    public void create(T dto) {
-        if (jpaRepository.findById(dto.getId()).isEmpty()) {
-            E entity = mapper.map(dto, entityClass);
-            jpaRepository.save(entity);
-        } else
-            throw new RuntimeException("Entity with id " + dto.getId() + " exist");
+    public T create(T dto) {
+        E entity = mapper.map(dto, entityClass);
+        entity.setId(dto.getId());
+        return mapper.map(jpaRepository.save(entity), dtoClass);
     }
 
     public void updateById(Long id, T dto) {
@@ -53,15 +53,18 @@ public abstract class BaseCrudService<T extends BaseDto, E extends BaseEntity> {
             E entity = mapper.map(dto, entityClass);
             entity.setId(id);
             jpaRepository.save(entity);
+            log.info("Entity with id " + id + " updated");
         } else
             throw new RuntimeException("Entity with id " + id + " does not exist");
     }
 
     public void deleteById(Long id) {
-        if (jpaRepository.findById(id).isPresent())
+        if (jpaRepository.findById(id).isPresent()) {
             jpaRepository.deleteById(id);
-        else
+            log.info("Entity with id " + id + " deleted");
+        } else {
             throw new RuntimeException("Entity with id " + id + " does not exist");
+        }
     }
 
 
