@@ -51,12 +51,12 @@ VALUES ('2022-05-01', 'PENDING', 1, 1, 1),
        ('2023-05-05', 'DELIVERED', 6, 6, 6);
 
 INSERT INTO payment (amount, payment_date, payment_method, customer_id, order_id)
-VALUES (50.0, '2022-05-01', 'CASH', 1, 1),
-       (25.0, '2022-05-02', 'CARD', 2, 2),
-       (100.0, '2022-05-03', 'PAYPAL', 3, 3),
-       (30.0, '2022-05-04', 'CARD', 4, 4),
+VALUES (50.0, '2018-05-01', 'CASH', 1, 1),
+       (25.0, '2019-05-02', 'CARD', 2, 2),
+       (100.0, '2020-05-03', 'PAYPAL', 3, 3),
+       (30.0, '2021-05-04', 'CARD', 4, 4),
        (80.0, '2022-05-05', 'PAYPAL', 5, 5),
-       (80.0, '2022-05-05', 'CASH', 6, 6);
+       (80.0, '2023-05-05', 'CASH', 6, 6);
 
 INSERT INTO review (rating, review_date, review_text, customer_id, order_id)
 VALUES (4, '2022-05-01', 'Great service!', 1, 1),

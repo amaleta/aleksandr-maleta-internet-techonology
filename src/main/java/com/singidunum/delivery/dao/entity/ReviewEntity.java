@@ -34,7 +34,7 @@ public class ReviewEntity implements BaseEntity {
     private String reviewText;
 
     @Column(name = "rating")
-    private Integer rating;
+    private Long rating;
 
     @Column(name = "review_date")
     private LocalDate reviewDate;

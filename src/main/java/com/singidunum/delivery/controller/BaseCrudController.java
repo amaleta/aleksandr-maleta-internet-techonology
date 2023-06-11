@@ -11,6 +11,7 @@ import com.singidunum.delivery.service.BaseCrudService;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,17 @@ public abstract class BaseCrudController<T extends BaseDto> {
         }
     }
 
+    private static Object getField(Object object, String fieldName) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @RequestMapping(method = {RequestMethod.GET})
     public ResponseEntity<List<T>> getList(
         @RequestParam(value = "filter", required = false) String filter,
@@ -75,7 +87,8 @@ public abstract class BaseCrudController<T extends BaseDto> {
                     .subList(rangeInt[0], rangeInt[1] + 1 > list.size() ? list.size() : rangeInt[1] + 1);
             } catch (ClassCastException e) {
                 Comparator<T> comparator =
-                    Comparator.comparing(elem -> getField(elem, orderParam.getField(), String.class));
+                    Comparator.comparing(elem -> Objects.requireNonNull(getField(elem, orderParam.getField()))
+                        .toString());
                 if (orderParam.getOrder().equals("DESC")) {
                     comparator = comparator.reversed();
                 }

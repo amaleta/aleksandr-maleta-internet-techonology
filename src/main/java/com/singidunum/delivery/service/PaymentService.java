@@ -5,10 +5,12 @@ import com.singidunum.delivery.dao.repository.PaymentRepository;
 import com.singidunum.delivery.dto.PaymentDto;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class PaymentService extends BaseCrudService<PaymentDto, PaymentEntity> {
     private final PaymentRepository repository;
     private final CustomerService customerService;
@@ -31,11 +33,23 @@ public class PaymentService extends BaseCrudService<PaymentDto, PaymentEntity> {
     @Override
     public PaymentDto create(PaymentDto dto) {
         PaymentEntity entity = mapper.map(dto, PaymentEntity.class);
-        entity.setId(dto.getId());
         entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
         entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
         entity.setPaymentDate(LocalDate.parse(dto.getPaymentDate()));
         return mapper.map(repository.save(entity), PaymentDto.class);
+    }
+
+    @Override
+    public void updateById(Long id, PaymentDto dto) {
+        if (repository.findById(id).isPresent()) {
+            PaymentEntity entity = mapper.map(dto, PaymentEntity.class);
+            entity.setCustomer(customerService.findEntityById(dto.getCustomerId()));
+            entity.setOrderEntity(orderService.findEntityById(dto.getOrderId()));
+            entity.setPaymentDate(LocalDate.parse(dto.getPaymentDate()));
+            repository.save(entity);
+            log.info("Entity with id " + id + " updated");
+        } else
+            throw new RuntimeException("Entity with id " + id + " does not exist");
     }
 
     public List<PaymentDto> getAmountForDateRange(LocalDate startDate, LocalDate endDate) {

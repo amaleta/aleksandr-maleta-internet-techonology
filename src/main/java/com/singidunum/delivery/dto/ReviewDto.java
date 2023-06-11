@@ -10,6 +10,6 @@ public class ReviewDto implements BaseDto {
     private Long customerId;
     private Long orderId;
     private String reviewText;
-    private Integer rating;
+    private Long rating;
     private String reviewDate;
 }
