@@ -49,6 +49,8 @@ public class SecurityConfiguration {
                 corsConfiguration.setAllowCredentials(true);
                 return corsConfiguration;
             }))
+            .requiresChannel(channel ->
+                channel.anyRequest().requiresSecure())
             // Настройка доступа к конечным точкам
             .authorizeHttpRequests(request -> request
                 // Можно указать конкретный путь, * - 1 уровень вложенности, ** - любое количество уровней вложенности
