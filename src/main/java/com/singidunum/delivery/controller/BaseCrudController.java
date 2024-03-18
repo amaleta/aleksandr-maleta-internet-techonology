@@ -8,6 +8,7 @@ import com.singidunum.delivery.dto.FilterIdList;
 import com.singidunum.delivery.dto.IdDto;
 import com.singidunum.delivery.dto.OrderParam;
 import com.singidunum.delivery.service.BaseCrudService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
@@ -25,37 +26,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+@SecurityRequirement(name = "bearerAuth")
 public abstract class BaseCrudController<T extends BaseDto> {
     private final BaseCrudService baseCrudService;
     private final ObjectMapper objectMapper;
 
-
     public BaseCrudController(BaseCrudService baseCrudService) {
         this.baseCrudService = baseCrudService;
         this.objectMapper = new ObjectMapper();
-    }
-
-    private static <F> F getField(Object object, String fieldName, Class<F> fieldType) {
-        try {
-            Field field = object.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return fieldType.cast(field.get(object));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static Object getField(Object object, String fieldName) {
-        try {
-            Field field = object.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(object);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     @RequestMapping(method = {RequestMethod.GET})
@@ -147,5 +125,27 @@ public abstract class BaseCrudController<T extends BaseDto> {
         FilterIdList filterIdList = objectMapper.readValue(filter, FilterIdList.class);
         filterIdList.getId().forEach(id -> baseCrudService.deleteById(id));
         return new ResponseEntity<>(filterIdList.getId(), HttpStatus.OK);
+    }
+
+    private static <F> F getField(Object object, String fieldName, Class<F> fieldType) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return fieldType.cast(field.get(object));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static Object getField(Object object, String fieldName) {
+        try {
+            Field field = object.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
