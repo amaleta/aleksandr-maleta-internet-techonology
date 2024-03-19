@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
     private Long id;
+
+    private String token;
+
+    private Instant expiryDate;
 
     @Column(name = "username", unique = true, nullable = false)
     private String username;

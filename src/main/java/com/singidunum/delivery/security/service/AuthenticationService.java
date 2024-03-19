@@ -1,10 +1,14 @@
 package com.singidunum.delivery.security.service;
 
 import com.singidunum.delivery.security.dto.JwtAuthenticationResponse;
+import com.singidunum.delivery.security.dto.JwtResponse;
+import com.singidunum.delivery.security.dto.RefreshRequest;
 import com.singidunum.delivery.security.dto.SignInRequest;
 import com.singidunum.delivery.security.dto.SignUpRequest;
 import com.singidunum.delivery.security.model.Role;
 import com.singidunum.delivery.security.model.User;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,12 +36,22 @@ public class AuthenticationService {
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
             .role(Role.ROLE_USER)
+            .token(UUID.randomUUID().toString())
+            .expiryDate(Instant.now().plusSeconds(6000))//100 min
             .build();
 
         userService.create(user);
 
         var jwt = jwtService.generateToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        return new JwtAuthenticationResponse(jwt, user.getToken());
+    }
+
+    public JwtResponse updateJwtByRefresh(RefreshRequest request) {
+        var user = userService.findByToken(request.getRefreshToken());
+        if (userService.isValidRefresh(user)) {
+            return new JwtResponse(jwtService.generateToken(user));
+        }
+        throw new RuntimeException("Invalid refresh token");
     }
 
     /**
@@ -57,6 +71,7 @@ public class AuthenticationService {
             .loadUserByUsername(request.getUsername());
 
         var jwt = jwtService.generateToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        var token = userService.getByUsername(request.getUsername()).getToken();
+        return new JwtAuthenticationResponse(jwt, token);
     }
 }

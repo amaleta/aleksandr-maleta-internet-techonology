@@ -1,6 +1,8 @@
 package com.singidunum.delivery.controller;
 
 import com.singidunum.delivery.security.dto.JwtAuthenticationResponse;
+import com.singidunum.delivery.security.dto.JwtResponse;
+import com.singidunum.delivery.security.dto.RefreshRequest;
 import com.singidunum.delivery.security.dto.SignInRequest;
 import com.singidunum.delivery.security.dto.SignUpRequest;
 import com.singidunum.delivery.security.service.AuthenticationService;
@@ -26,6 +28,12 @@ public class AuthController {
     @PostMapping("/login")
     public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
         return authenticationService.signIn(request);
+    }
+
+    @Operation(summary = "Refresh токена доступа")
+    @PostMapping("/refresh")
+    public JwtResponse refresh(@RequestBody @Valid RefreshRequest request) {
+        return authenticationService.updateJwtByRefresh(request);
     }
 }
 

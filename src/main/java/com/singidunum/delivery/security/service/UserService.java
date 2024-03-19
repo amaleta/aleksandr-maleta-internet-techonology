@@ -3,6 +3,7 @@ package com.singidunum.delivery.security.service;
 import com.singidunum.delivery.security.model.Role;
 import com.singidunum.delivery.security.model.User;
 import com.singidunum.delivery.security.repository.UserRepository;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -50,6 +51,15 @@ public class UserService {
         return repository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
+    }
+
+    public User findByToken(String token) {
+        return repository.findByToken(token)
+            .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+    }
+
+    public boolean isValidRefresh(User user) {
+        return user.getExpiryDate().compareTo(Instant.now()) > 0;
     }
 
     /**
